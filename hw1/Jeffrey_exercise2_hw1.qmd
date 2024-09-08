@@ -1,0 +1,39 @@
+---
+title: "Jeffrey_exercise2_hw1"
+author: "Jack Jeffrey"
+format: html
+editor: visual
+---
+
+##--------------------------------------------------------- \## R code for Data Science for Beginners Day 2: Exercises \## Univeristy of Essex \## Author: Jack Jeffrey ##---------------------------------------------------------
+
+# Task 1. if...else function
+
+# Mary and John's family seating for movie
+
+movies_seats \<- 1:10 for (seat in movies_seats) { if (seat \>= 1 && seat\<= 5) { message(paste("seat", seat, "is assigned to Mary's family.")) } else if (seat \>= 6 && seat \<= 10) { message(paste("seat", seat, "is assigned to John's family.")) } } \# movie seats have been assigned
+
+# Task 1-2.
+
+# Mixing up the family members
+
+for (seat in movies_seats) { if (seat \>= 1 && seat \<= 5) { \# for seats 1-5, alternate between Mary and John's family if (seat %% 2 == 1) { message(paste("seat", seat, "is assigned to Mary's family.")) } else { message(paste("seat", seat, "is assigned to John's family.")) } } else if (seat \>= 6 && seat \<= 10) { \# for seats 6-10, alternate between John's and Mary's family if (seat %% 2 == 0) { message(paste("seat", seat, "is assigned to John's family.")) } else { message(paste("seat", seat, "is assigned to Mary's family.")) } } } \# family members successfully mixed together
+
+# Task 2. loop
+
+# 2-1. Printing Years from 2012 - 2022
+
+years \<- 2012:2022 for (year in years) { message(paste("year", year,")) } \# years from 2012 to 2022 successfully printed
+
+# 2-2. Loop with complete sentence
+
+for (year in years) { sentence \<- paste("the year is", year) message(paste(sentence,")) } \# sentences successfully printed
+
+# 2-3. Exclude 2020 and 2021 due to COVID-19
+
+for (year in years) { #skip the years 2020 and 2021 if (year == 2020 \|\| year == 2021) { next } sentence \<- paste("The year is", year) message(paste(sentence,")) } \# successfully excluded the COVID-19 years from the loop
+
+# Task 3. functions
+
+add_ten \<- function(x) { result \<- x + 10 return(result) } \# created function that always adds 10 add_ten(3) add_ten(10) \# function works properly \# 3.2 find missing values within a vector identify_missing_values \<- function(vector) { missing_indices \<- which(is.na(vector)) if (length(missing_indices) == 0) { message(paste("there are no missing values in the vector.")) } else { for (index in missing_indices) { message(paste("missing values found at position", index, "in the vector.")) } } } \# set up if else function to identify missing values vector \<- c(1,NA, 3, NA)\
+\# created vector containing missing values identify_missing_values(vector) \# missing values found at position 2 and position 4
