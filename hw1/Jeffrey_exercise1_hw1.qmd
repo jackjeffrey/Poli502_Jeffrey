@@ -1,0 +1,90 @@
+---
+title: "Exercise1_hw1_Jeffrey"
+author: "Jack Jeffrey"
+format: html
+editor: visual
+---
+
+##------------------------------------------------------------
+
+\## R code for Data Science for Beginners Day 1: Individual Exercise
+
+\## Univeristy of Essex
+
+\## Author: Jack Jeffrey \##
+
+##------------------------------------------------------------
+
+# Task 1. Modify the author name
+
+# Task 2. Perform the following calculations by writing R commands
+
+# 2-1: (4\*(30 + 6)) \^ 0.5
+
+print(result1) \# should print 12
+
+# 2-2: (4\*30 + 6) \^ 0.5
+
+print(result2) \# should print 11.22497
+
+# Task 3. Working with objects
+
+# 3-1: X1 \<- 73
+
+# created an object
+
+# 3-2: X2 \<- (99+38)
+
+# created a second object
+
+# 3-3: X3 \<- (X1\*X2)
+
+# created a third object
+
+# 3-4 (X3-1) \^ 0.25
+
+print(result3) \# should print 10
+
+# Task 4. Calculation using objects
+
+# 4-1: part.1 \<- (30+6)
+
+# created an object equal to 36
+
+# 4-2: part.2 \<- (part.1\*4)
+
+# created a second object equal to 144
+
+# 4-3: part.2 \^ 0.5
+
+print(result4) \# should print 12
+
+# Task 5. Detecting R data types
+
+# 5-1 is.character(color_vector \<- c("blue", "green", "red"))
+
+# created a character vector \# should print TRUE
+
+# 5-2 factor_vector \<- factor(c(2,4,6))
+
+# created a factor vector
+
+print(factor_vector)
+
+# Task 6. Testing NA
+
+# 6-1 numeric_vector_with_NA \<- c(1,2,NA,4)
+
+# created a numeric vector with an NA
+
+# 6-2 na_positions \<- which(is.na(numeric_vector_with_NA))
+
+print (na_positions) #should print 3
+
+# 6-3 numeric_vector_with_NaN \<- c(2,4,NaN,6)
+
+# created a numeric vector with an NaN
+
+# 6-4 nan_positions \<- which(is.nan(numeric_vector_with_NaN))
+
+print(nan_positions) #should print 3
