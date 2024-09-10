@@ -1,90 +1,78 @@
 ---
-title: "Exercise1_hw1_Jeffrey"
+title: "Jeffrey_exercise1_hw1"
 author: "Jack Jeffrey"
 format: html
 editor: visual
 ---
 
-##------------------------------------------------------------
+## R code for Data Science for Beginners Day 1: Individual Exercise
 
-\## R code for Data Science for Beginners Day 1: Individual Exercise
+## Univeristy of Essex
 
-\## Univeristy of Essex
-
-\## Author: Jack Jeffrey \##
-
-##------------------------------------------------------------
+## Author: Jack Jeffrey
 
 # Task 1. Modify the author name
 
 # Task 2. Perform the following calculations by writing R commands
 
-# 2-1: (4\*(30 + 6)) \^ 0.5
+# 2-1:
 
-print(result1) \# should print 12
+result1 \<- (4 \* (30 + 6)) \^ 0.5 print(result1)
 
-# 2-2: (4\*30 + 6) \^ 0.5
+# should print 12
 
-print(result2) \# should print 11.22497
+# 2-2:
+
+result2 \<- (4\*30 + 6) \^ 0.5 print(result2) \# should print 11.22497
 
 # Task 3. Working with objects
 
-# 3-1: X1 \<- 73
+# 3-1:
 
-# created an object
+X1 \<- 73 \# created an object \# 3-2: X2 \<- (99+38) \# created a second object \# 3-3: X3 \<- (X1\*X2) \# created a third object
 
-# 3-2: X2 \<- (99+38)
+# 3-4
 
-# created a second object
-
-# 3-3: X3 \<- (X1\*X2)
-
-# created a third object
-
-# 3-4 (X3-1) \^ 0.25
-
-print(result3) \# should print 10
+(X3-1) \^ 0.25 print(result3) \# should print 10
 
 # Task 4. Calculation using objects
 
-# 4-1: part.1 \<- (30+6)
+# 4-1:
 
-# created an object equal to 36
+part.1 \<- (30+6) \# created an object equal to 36
 
-# 4-2: part.2 \<- (part.1\*4)
+# 4-2:
 
-# created a second object equal to 144
+part.2 \<- (part.1\*4) \# created a second object equal to 144
 
-# 4-3: part.2 \^ 0.5
+# 4-3:
 
-print(result4) \# should print 12
+part.2 \^ 0.5 \# should print 12
 
 # Task 5. Detecting R data types
 
-# 5-1 is.character(color_vector \<- c("blue", "green", "red"))
+# 5-1
 
-# created a character vector \# should print TRUE
+color_vector \<- c("blue", "green", "red") is_character_vector \<- is.character(color_vector) print(is_character_vector)
 
-# 5-2 factor_vector \<- factor(c(2,4,6))
+# 5-2
 
-# created a factor vector
-
-print(factor_vector)
+factor_vector \<- factor(c(2,4,6)) \# created a factor vector print(factor_vector)
 
 # Task 6. Testing NA
 
-# 6-1 numeric_vector_with_NA \<- c(1,2,NA,4)
+# 6-1
 
-# created a numeric vector with an NA
+numeric_vector_with_NA \<- c(1,2,NA,4) \# created a numeric vector with an NA
 
-# 6-2 na_positions \<- which(is.na(numeric_vector_with_NA))
+# 6-2
 
-print (na_positions) #should print 3
+na_positions \<- which(is.na(numeric_vector_with_NA)) print (na_positions) #should print 3
 
-# 6-3 numeric_vector_with_NaN \<- c(2,4,NaN,6)
+# 6-3
 
-# created a numeric vector with an NaN
+numeric_vector_with_NaN \<- c(2,4,NaN,6) \# created a numeric vector with an NaN
 
-# 6-4 nan_positions \<- which(is.nan(numeric_vector_with_NaN))
+# 6-4
 
-print(nan_positions) #should print 3
+nan_positions \<- which(is.nan(numeric_vector_with_NaN)) print(nan_positions) #should print 3
