@@ -5,11 +5,7 @@ format: html
 editor: visual
 ---
 
-## R code for Data Science for Beginners Day 1: Individual Exercise
-
-## Univeristy of Essex
-
-## Author: Jack Jeffrey
+# Exercise 1
 
 # Task 1. Modify the author name
 

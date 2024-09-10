@@ -5,13 +5,7 @@ format: html
 editor: visual
 ---
 
-## R code for Data Science for Beginners Day 3: Individual Exercises
-
-## University of Essex
-
-## Author: Jack Jeffrey
-
-## Date 09-06-2024
+# Exercise 3
 
 # 1. Vectors
 

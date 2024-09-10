@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-##--------------------------------------------------------- \## R code for Data Science for Beginners Day 2: Exercises \## Univeristy of Essex \## Author: Jack Jeffrey ##---------------------------------------------------------
+# Exercise 2
 
 # Task 1. if...else function
 
