@@ -1,5 +1,7 @@
 ---
 title: "Jeffrey_exercise1_hw2"
+author: "Jack Jeffrey"
+Date: "2024-09-15"
 format: pdf
 editor: visual
 ---
@@ -82,7 +84,7 @@ help(floor)
 
 # commands do.
 
-# 2. Vectors
+# 2. Vectors ----------------------------------------------
 
 # Create an object called "vec.a" which is a vector consisting of
 
@@ -317,3 +319,5 @@ mat.w [2, 2]
 ```{r}
 matrix.v [2, 2]
 ```
+
+# End of exercise
