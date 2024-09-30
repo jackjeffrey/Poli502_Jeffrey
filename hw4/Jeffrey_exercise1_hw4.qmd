@@ -1,0 +1,86 @@
+---
+title: "Jeffrey_exercise1_hw4"
+author: "Jack Jeffrey"
+format: pdf
+editor: visual
+---
+
+# Birthday Simulation
+
+```{r}
+set.seed(1)
+n <- 100 # number of simulations 
+match <- 0 # count for if three birthdays are aligned
+# simulate a random sample of 1000 birthdays and check for matches of shared birthdays 
+sam = 10000
+# i = 1
+for(i in 1: sam){
+  # loop the simulation of trials
+  birthdays <- sample(365, n, replace = TRUE)
+  # assigns birthdays to individuals, TRUE allows repeats
+  if(any(table(birthdays) >= 3)){ # determines if three people have been assigned identical birthdays and gives a frequency table of the selection of each birthday
+    match <- match +1 
+  }
+}
+# Estimate the probability of match
+
+p_match <- match / sam # how many matches are there
+print(p_match)
+```
+
+# approximately 65% of the time in a room of 100 people 3 people will share the same birthday
+
+# Monty Hall Simulation
+
+```{r}
+set.seed(123)
+n_trials <- 10000  # number of simulations
+stick_wins <- 0    # count for wins if you stick
+switch_wins <- 0   # count for wins if you switch
+# loop the simulated trials 
+for (i in 1:n_trials) {
+  # Randomly place the car behind one of the 3 doors
+  car_door <- sample(1:3, 1)
+  
+  # Randomly choose a door
+  chosen_door <- sample(1:3, 1)
+  
+  if (chosen_door == car_door) {
+    opened_door <- sample(setdiff(1:3, chosen_door), 1)
+     # If the chosen door is the car door, the host opens one of the other two doors which both have goats.
+  } else {
+    opened_door <- setdiff(1:3, c(chosen_door, car_door))
+    # if the chosen door is not the car door, the host must open the remaining door which is not the car door. 
+  }
+  switch_door <- setdiff(1:3, c(chosen_door, opened_door))[1]
+   # Choose the remaining unopened door to switch to
+  # Print trial details for the first few iterations to examine process
+  if (i <= 10) {
+    cat("Trial:", i, "\n")
+    cat("Car Door:", car_door, "\n")
+    cat("Chosen Door:", chosen_door, "\n")
+    cat("Opened Door:", opened_door, "\n")
+    cat("Switch Door:", switch_door, "\n\n")
+  }
+  # prints the door options, the chosen door, and the trial number
+  if (chosen_door == car_door) {
+    stick_wins <- stick_wins + 1
+  }
+  # Check if car is behind the original choice (sticking)
+
+  if (switch_door == car_door) {
+    switch_wins <- switch_wins + 1
+      # Check if car is behind the switched choice (switching)
+  }
+}
+
+# Calculate stick wins divided by number of trials and switch wins by number of trials to give percentages for outcomes
+p_stick <- stick_wins / n_trials
+p_switch <- switch_wins / n_trials
+
+# View the results
+cat("Probability of winning by sticking:", p_stick, "\n")
+cat("Probability of winning by switching:", p_switch, "\n")
+```
+
+# if the player sticks with original choice they have a 34% chance of getting the door with the car, if the player switches to the unopened door they have a 66% chance of opening the door with the car.
