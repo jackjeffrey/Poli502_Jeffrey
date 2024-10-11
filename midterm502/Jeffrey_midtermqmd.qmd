@@ -67,8 +67,8 @@ view(world.data)
 summary(world.data$gdp_10_thou)
 sd(world.data$gdp_10_thou, na.rm = TRUE)
 ```
-# numerical summary of GDP variable, Maximum GDP per capita is 4.7354 indicating over 40,000 US dollars per capita for the wealthiest country The mean indicates an average of 6,000 US dollars per capita for all countries. The max indicates that the wealthiest country is over 40,000 US dollars per capita. There is also 14 countries without data accoridng the NA value. 
-# produce standard deviation with removed NA's equating to 0.943
+# numerical summary of GDP variable, Maximum GDP per capita is 4.7354 indicating over 40,000 US dollars per capita for the wealthiest country The mean indicates an average of 6,000 US dollars per capita for all countries. There is also 14 countries without data accoridng the NA value. 
+# produced standard deviation with removed NA's equating to 0.943
 
 # Task 7
 
