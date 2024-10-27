@@ -1,0 +1,145 @@
+---
+title: "Jeffrey_hw5_exercise1"
+author: "Jack Jeffrey"
+format: pdf
+editor: visual
+---
+
+## HW 5
+
+# load tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+# load data set
+
+```{r}
+world.data <- read.csv("/Users/jackjeffrey/Documents/Poli502_Jeffrey/Data/world.csv")
+# view data
+head(world.data)
+```
+
+```{r}
+# summarize statistics 
+summary(world.data $ women09)
+# view class 
+world.data $ women09 %>% class
+# check for NA's
+is.na(world.data$women09)
+# view mean with NA's removed 
+world.data $ women09 %>% na.omit %>% mean
+# view standard deviation with NA's removed 
+sd(world.data $ women09, na.rm = TRUE)
+# assign variable to an object with NA's removed 
+women09_clean <- na.omit(world.data$women09)
+```
+
+# Create a histogram
+
+```{r}
+g <- ggplot(world.data, aes(x = women09)) + 
+  geom_histogram() + #geom_histogram(binwidth = 1)
+  theme(axis.text.x = element_text(size = 12)) +
+  xlab("Percent women in congress") + ylab("Number of countries") 
+g
+```
+
+# Create a density plot smoothed histogram
+
+```{r}
+g <- ggplot(world.data, aes(x = women09))
+g <- g + geom_density()
+g <- g + theme(axis.text.x = element_text(size = 12))
+g <- g + xlab("Percent women in congress")
+g <- g + ylab("Number of countries")
+g
+```
+
+# 1. Constructing a confidence interval
+
+```{r}
+# find point estimate
+mean(world.data $ women09, na.rm = TRUE)
+# store point estimate as an object 
+pe <- mean(world.data $ women09, na.rm = TRUE)
+# store standard deviation as an object 
+sd <- sd(world.data $ women09, na.rm = TRUE)
+# find sample size and store it as an object
+n <- length( world.data $ women09[is.na(world.data $ women09) == FALSE] )
+# find standard error and store it as an object 
+se <- sd/sqrt(n)
+# Construct a confidence interval 
+# construct lower bound 
+pe - 2 * se
+# construct upper bound 
+pe + 2 * se
+# 95% confidence interval equals [15.53, 18.82]
+```
+
+# 2. Creating a subset of dataset
+
+```{r}
+# create a subset of data without NA's
+wd.women09 <- world.data[ is.na(world.data $ women09) == FALSE , ]
+head(wd.women09)
+# find confidence interval within subset 
+# point estimate 
+pe <- mean( wd.women09 $ women09 )
+# standard error 
+sd <- sd( wd.women09 $ women09 )
+n <- length( wd.women09 $ women09 )
+se <- sd/sqrt(n)
+pe  
+# lower bound 
+pe - 2 * se
+# upper bound 
+pe + 2 * se
+```
+
+# 3. Re-labeling a factor variable
+
+```{r}
+# create a histogram using facet wrap
+g <- ggplot(world.data, aes(x = gini08))
+g <- g + geom_histogram()
+g <- g + theme(axis.text.x = element_text(size = 12))
+g <- g + xlab("Gini coefficient")
+g <- g + ylab("Number of countries")
+g <- g + facet_wrap( ~ democ_regime) # we can create separate histograms of gini08 for differenr regime types.
+g
+```
+
+# Construct a smaller dataset
+
+```{r}
+# assign variable as an object with NA's removed 
+wd.dem <- world.data[ is.na(world.data $ democ_regime) == FALSE , ]
+wd.dem <- world.data %>% filter(!is.na(democ_regime))
+# create a histogram using the new dataset
+g <- ggplot(wd.dem, aes(x = gini08))
+g <- g + geom_histogram()
+g <- g + theme(axis.text.x = element_text(size = 12))
+g <- g + xlab("Gini coefficient")
+g <- g + ylab("Number of countries")
+g <- g + facet_wrap( ~ democ_regime)
+g
+```
+
+# Re-create histogram with changed labels
+
+```{r}
+wd.dem $ democ <- factor(wd.dem $ democ_regime, 
+                         levels = c("No", "Yes"),
+                         labels = c("Autocracy", "Democracy")
+                         )
+# create a histogram with new factors
+g <- ggplot(wd.dem, aes(x = gini08))
+g <- g + geom_histogram()
+g <- g + theme(axis.text.x = element_text(size = 12))
+g <- g + xlab("Gini coefficient")
+g <- g + ylab("Number of countries")
+g <- g + facet_wrap( ~ democ)
+g + theme_bw() # I like a black-white theme more
+```
