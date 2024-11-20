@@ -1,0 +1,261 @@
+---
+title: "Jeffrey_hw7_exercise1"
+author: "Jack Jeffrey"
+format: pdf
+editor: visual
+---
+
+## HW 7 Bivariate Regression
+
+# Question 1
+
+```{r}
+# load necessary packages 
+library(tidyverse)
+# specify path to world data 
+getwd()
+setwd("/Users/jackjeffrey/Documents/Poli502_Jeffrey/Data")
+# assign world data an object
+world <- read.csv("world.csv")
+# view summary statistics for women and gdp variables 
+summary(world$women09)
+length(world$women09)
+# mean of 17.18 with 11 NA's
+# 191 countries
+summary(world$gdp10_thou)
+# length 0 class and mode both null
+```
+
+# Graphical univariate analysis
+
+```{r}
+# Histogram for (women09) variable
+hist(world$women09, main="Distribution of Female Representation (women09)",
+     xlab="Female Representation (women09)", col="lightblue", border="black", 
+     breaks=15)
+# female representation is the highest from 10-20 and starts to get progressively lower. 
+# Remove rows with missing data in either 'gdp_10_thou' or 'women09'
+world_clean <- world[!is.na(world$gdp_10_thou) & !is.na(world$women09), ]
+# view summary of gdp_10_thou cleaned
+summary(world_clean$gdp_10_thou)
+# mean of 0.6258 with min of 0.0090 and max of 4.7354
+# Histogram of economic developement variable
+hist(world_clean$gdp_10_thou, main = "Distribution of Economic Development", 
+     xlab = "GDP (in thousands)", col = "lightblue", border = "black")
+# gdp recorded in thousands, highest peak in the 0-1 range with a frequency/countries over 120, significantly drops off after that. 
+```
+
+# Question 2.
+
+```{r}
+length(world_clean$women09)
+# With NA's removed its down to 169 countries
+length(world_clean$gdp_10_thou)
+# With NA's removed length is no longer null and there are 169 countries
+```
+
+# Question 3.
+
+```{r}
+# Calculate correlation coeficcient 
+cor_coefficient <- cor(world_clean$women09, world_clean$gdp_10_thou)
+cor_coefficient
+# The correlation coeficcient is 0.305, positive moderate linear 
+# relationship, as economic developement increases female representation 
+# slighly increases
+# Test for statistical significance 
+cor_test <- cor.test(world_clean$women09, world_clean$gdp_10_thou)
+cor_test
+# p-value of 5.501e-05 is much smaller 0.05 so we can reject the null, the # relationship is statistically significant at both the 95% and 99% 
+# confidence interval
+# 95 confidence interval of 0.161, 0.436
+# T score of 4.14 indicating a significant relationship
+# degrees of freedom equal to 167
+```
+
+# Question 4
+
+```{r}
+# Null Hypothesis (H0): (gdp_10_thou) has no effect on (women09).The slope # of the regression line is zero.
+
+# Alternative Hypothesis (H1):(gdp_10_thou) has a significant effect on
+
+# (women09).The slope of the regression line (beta_1) is not zero.
+```
+
+# Question 5
+
+```{r}
+# Run the linear regression model
+model <- lm(women09 ~ gdp_10_thou, data = world_clean)
+# View regression output
+summary(model)
+# Estimated regression equation
+# (a) women09 = 14.8430 + 3.4574*gdp_10_thou
+# Sign for the coefficient of X
+# (b) X coefficient equals 3.4574 and is positive 
+# Size of coefficient X 
+# (c) Size is 3.4574, for every unit increase of X, Y increases by 3.4574
+# Significance and condidence level | if increased by 10,000 dollars 
+# women09 would increase by 3.4574% and if increased by 1,000 dollars 
+# women09 would increase by 0.34574%. 
+# (d) P-value of 5.501e-05 is much smaller than 0.05 and is statistically # significant at the 99% confidence level, strong evidence to rject null 
+# hypothesis. 
+```
+
+# Question 6
+
+```{r}
+# graph regression results 
+ggplot(data = world_clean, aes(x = gdp_10_thou, y = women09)) +
+  geom_point(color = "blue", alpha = 0.6) +  
+  geom_smooth(method = "lm", color = "red", fill = "pink", se = TRUE) +  
+  labs(
+    title = "Marginal Effect of Economic Development on Female Representation",
+    x = "Economic Development (GDP)",
+    y = "Female Representation"
+  ) +
+  theme_minimal()
+```
+
+# Graph interpretation
+
+```{r}
+# The scatter plot points show the actual data, while the red regression line indicates the predicted relationship. The positive relationship indicates that as GDP increases female representation increases. 
+```
+
+# Question 7
+
+```{r}
+# vew regression statistics 
+summary(model) 
+# Based on the R sqaured resukt of 0.09308, only a 9.31% of women09 is 
+# explained by gdp_10_thou, this is too small of a value to confident that # women09 is caused by gdp_10_thou. 
+# There is a residual standard error of 10.38% which is quite large
+# considering women09 is in percentages and is probably too large to feel
+# good about the model. 
+```
+
+# Question 8
+
+```{r}
+# obtain predicted values for women09 
+world_clean$predicted_women09 <- predict(model)
+# find the predicted and actual values for women09 in Rwanda 
+rwanda_predicted <- world_clean$predicted_women09[world_clean$country == "Rwanda"]
+rwanda_actual <- world_clean$women09[world_clean$country == "Rwanda"]
+# Calculate difference between actual and predicted values 
+residual_rwanda <- rwanda_actual - rwanda_predicted
+# evaluate values
+cat("Predicted value for Rwanda:", rwanda_predicted, "\n")
+cat("Actual value for Rwanda:", rwanda_actual, "\n")
+cat("Difference (residual) for Rwanda:", residual_rwanda, "\n")
+# interpretation - the models predcited value verses the actual value is 
+# noticeably different. The residual is 41.38 which indicates the model is
+# not well suited to fit Rwanda. 
+```
+
+# Question 9
+
+```{r}
+# Create a smaller subset for PR and non PR countries 
+pr_countries <- world_clean[world_clean$pr_sys == "Yes", ]
+non_pr_countries <- world_clean[world_clean$pr_sys == "No", ]
+# View observations for each object
+cat("Number of PR countries:", nrow(pr_countries), "\n")
+cat("Number of Non-PR countries:", nrow(non_pr_countries), "\n")
+# 63 PR countries 
+# 106 Non-PR countries
+
+# Regression for PR countries 
+pr_model <- lm(women09 ~ gdp_10_thou, data = pr_countries)
+cat("Regression results for PR countries:\n")
+summary(pr_model)
+# Regression for Non-PR Countries
+non_pr_model <- lm(women09 ~ gdp_10_thou, data = non_pr_countries)
+cat("Regression results for Non-PR countries:\n")
+summary(non_pr_model)
+```
+
+# Question 10
+
+```{r}
+# Extract regression coeficcients from PR model
+intercept <- coef(pr_model)[1]
+slope <- coef(pr_model)[2]
+# Print regression equation
+cat("Estimated regression equation for PR countries: women09 =", round(intercept, 2), "+", round(slope, 2), "* gdp_10_thou\n")
+# Estimated regression equation for PR countries: women09 = 19.38 + 3.64 *
+# gdp_10_thou
+# Interpretation 
+cat("For PR countries, every additional unit increase in GDP (in thousands) is associated with an increase of", 
+    round(slope, 2), "% in female representation.\n")
+# For PR countries, every additional unit increase in GDP (in thousands) is associated with an increase of 3.64 % in female representation.
+
+# Graph scatterplot for PR countries 
+ggplot(pr_countries, aes(x = gdp_10_thou, y = women09)) +
+  geom_point(color = "blue", alpha = 0.6) +  # Add scatterplot points
+  geom_smooth(method = "lm", color = "red", fill = "pink", se = TRUE) +  # Add regression line with confidence interval
+  labs(
+    title = "Effect of Economic Development on Female Representation for PR Countries",
+    x = "Economic Development (GDP in Thousands)",
+    y = "Female Representation (%)"
+  ) +
+  theme_minimal()
+```
+# Graph Interpretation
+```{r}
+# This is a weak positive relationship. The wide confidence intervals
+# suggest more variability in the data. There relationship between the two
+# variables is weaker in Non-PR compared to PR countries. 
+```
+# Question 11
+
+```{r}
+# Extract regression coefficients for Non-Pr countries
+intercept_nonpr <- coef(non_pr_model)[1]
+slope_nonpr <- coef(non_pr_model)[2]
+# Print regression equation
+cat("Estimated regression equation for non-PR countries: women09 =", round(intercept_nonpr, 2), "+", round(slope_nonpr, 2), "* gdp_10_thou\n")
+# Estimated regression equation for non-PR countries: women09 = 12.96 +
+# 1.66 * gdp_10_thou
+# Interpretation
+cat("For non-PR countries, every additional unit increase in GDP (in thousands) is associated with an increase of", 
+    round(slope_nonpr, 2), "% in female representation.\n")
+# For non-PR countries, every additional unit increase in GDP (in
+# thousands) is associated with an increase of 1.66 % in female
+# representation.
+
+# Graph scatterplot for Non-Pr countries
+ggplot(non_pr_countries, aes(x = gdp_10_thou, y = women09)) +
+  geom_point(color = "blue", alpha = 0.6) +  # Scatterplot points
+  geom_smooth(method = "lm", color = "red", fill = "pink", se = TRUE) +  # Regression line with confidence interval
+  labs(
+    title = "Effect of Economic Development on Female Representation for Non-PR Countries",
+    x = "Economic Development (GDP in Thousands)",
+    y = "Female Representation (%)"
+  ) +
+  theme_minimal()
+```
+
+# Question 12
+
+```{r}
+# Find predicted values for PR countries
+pr_countries$predicted_women09 <- predict(pr_model, newdata = pr_countries)
+# Find predicted and actual values for Rwanda
+rwanda_predicted <- pr_countries$predicted_women09[pr_countries$country == "Rwanda"]
+rwanda_actual <- pr_countries$women09[pr_countries$country == "Rwanda"]
+# Print predicted and actual values
+cat("Predicted Female Representation for Rwanda:", round(rwanda_predicted, 2), "%\n")
+cat("Actual Female Representation for Rwanda:", round(rwanda_actual, 2), "%\n")
+# Predicted Female Representation for Rwanda: 19.45 %
+# Actual Female Representation for Rwanda: 56.3 %
+
+# Calculate and print residual
+residual_rwanda <- rwanda_actual - rwanda_predicted
+cat("Difference (Residual) between predicted and actual value for Rwanda:", round(residual_rwanda, 2), "%\n")
+# Difference (Residual) between predicted and actual value for Rwanda:
+# 36.85 %
+# The model underestimated the actual value by 36.85%. Based on the model # it cannot be conluded that economic development will lead to an increase # in femal representation in Rwanda. There are likely many other variables # influencing female representation in the country. 
+```
