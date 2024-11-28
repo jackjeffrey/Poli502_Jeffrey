@@ -1,0 +1,222 @@
+---
+title: "Jeffrey_hw8"
+author: "Jack Jeffrey"
+format: pdf
+editor: visual
+---
+
+## HW8
+```{r}
+# Set CRAN mirror to avoid errors during package installation
+options(repos = c(CRAN = "https://cran.rstudio.com/"))
+# Set working directory and load world data
+setwd("/Users/jackjeffrey/Documents/Poli502_Jeffrey/Data")
+world <- read.csv("world.csv")
+# Investigate dataset
+head(world)
+str(world)
+names(world)
+```
+
+# 1. Estimate a constant-only model
+```{r}
+# Fit a constant only model
+model_constant <- lm(women09 ~ 1, data = world)
+# View summary of model
+summary(model_constant)
+# Estimate of intercept/mean equals 17.17772 which is 17% female representation
+# across all countries on average, standard error of 0.8238, P-value below zero
+# indicates the result is statistically significant meaning there is a clear average.
+# 110 Observations not included due to NA's.
+```
+
+# 2. Estimate a model that uses per capita GDP (gdp_10_thou) as the main independent variable.
+```{r}
+# Fitting a linear model with women09 variable as dependent and gdp_10_thou
+# as independent variable
+model_gdp <- lm(women09 ~ gdp_10_thou, data = world)
+# view summary of model
+summary(model_gdp)
+# The intercept is 14.8430. When GDP (gdp_10_thou) is 0, the baseline female
+# representation would be approximately 14.84%. The coefficient for GDP is 3.4574, meaning
+# for each increase of 1,000 dollars in per capita GDP, female representation is
+# expected to increase by 3.46%. The p-value for gdp_10_thou is 5.5e-05, which is
+# much smaller than 0.05. This means that the relationship between GDP and female
+# representation is statistically significant.
+# The R-squared value is low (9.3%), which suggests that while GDP 
+# is statistically significant, it explains only a small portion 
+# of the variation in female representation.
+```
+
+# 3. Create a graph that shows the estimated effect of per capita GDP on female representation
+# using the effect function.
+```{r}
+# Create effect graph for GDP per capita's effect on female representation
+effect_gdp <- effect("gdp_10_thou", model_gdp)
+plot(effect_gdp, main = "Estimated Effect of Per Capita GDP on Female Representation",
+     xlab = "Per Capita GDP (in 10,000 dollars)", ylab = "Female Representation (Women09)")
+```
+
+# 4. Estimate a model that uses a dummy variable that measures electoral system (pr_sys) as the 
+# main independent variable.
+```{r}
+# Investigate PR system variable to see if it is binary
+unique(world$pr_sys)
+# Estimate a model with PR system as the main independent variable
+model_pr_sys <- lm(women09 ~ pr_sys, data = world)
+# summarize result
+summary(model_pr_sys)
+# Proportional representation has a positive effect on female representation,
+# with a coefficient of 8.23. P-value is 7.02e-07 and highly significant, 
+# meaning the electoral system has a statistically significant impact 
+# on female representation. The R-squared value is quite low, suggesting 
+# that the electoral system alone explains only about 12.95% of the 
+# variation in female representation. For countries with a non-proportional
+# representation electoral system, the average 
+# female representation is about 14.16.
+```
+# 5. Create a graph that shows the estimated effect of electoral system on female representation
+# using the effect function.
+```{r}
+# Create an effect graph for the effect of electoral systems 
+# on female representation
+effect_pr_sys <- effect("pr_sys", model_pr_sys)
+# Plot the effect 
+plot(effect_pr_sys)
+# Based on the plot, proportional representation systems result in 
+# much higher female representation
+```
+
+# 6. Estimate a model that includes per capita GDP AND electoral system dummy at the same time.
+```{r}
+# Create a multiple regression model
+model_gdp_prsys <- lm(women09 ~ gdp_10_thou + pr_sys, data = world)
+# View results
+summary(model_gdp_prsys)
+# Interpretation - The residual standard error of 9.73 is the average difference
+# between the actual values of female representation and the values 
+# predicted by the model. 20.77%  of the variation in female representation 
+# is explained by the per capita GDP and electoral system combined based on the R-squared value. 
+# With a p-value of 4.049e-09, this model is highly significant.
+```
+
+# 7. Comparing the four models you have estimated so far, which one fits the data best?
+```{r}
+# Model 4 fits the data best of the four models as it has 
+# the lowest Residual Standard Error and highest Adjusted R-squared 
+# meaning it accounts for more of the variation in female representation after penalizing for added predictors
+```
+
+# 8. Create a graph that shows the effect of per capita GDP on Y for countries that adopt a
+# proportional representation system.
+```{r}
+# filter out missing data in pr_sys (ensure pr_sys is a factor with 1/0 values or "Yes"/"No")
+world$pr_sys <- as.factor(world$pr_sys)  # make sure it's a factor
+levels(world$pr_sys)  # check factor levels to ensure correct filtering
+
+# Filter data for countries with proportional representation system
+pr_data <- subset(world, pr_sys == "Yes")  # Adjust to match your factor level
+
+# Define the model
+pr_model <- lm(women09 ~ gdp_10_thou, data = pr_data)
+
+# Generate predictions
+gdp_seq <- seq(min(pr_data$gdp_10_thou, na.rm = TRUE), 
+               max(pr_data$gdp_10_thou, na.rm = TRUE), 
+               length.out = 100)
+
+# Create data frame from predictions
+prediction_data <- data.frame(gdp_10_thou = gdp_seq)
+
+# Predict Y for GDP values
+prediction_data$women09_pred <- predict(pr_model, newdata = prediction_data)
+
+# Load tidyverse
+library(tidyverse)
+
+# Graph plot
+ggplot(pr_data, aes(x = gdp_10_thou, y = women09)) +
+  geom_point(alpha = 0.5) +  # Scatterplot of actual data
+  geom_line(data = prediction_data, aes(x = gdp_10_thou, y = women09_pred), 
+            color = "blue", size = 1) +  # Predicted effect line
+  labs(
+    title = "Effect of Per Capita GDP on Female Representation",
+    x = "Per Capita GDP (in thousands)",
+    y = "Female Representation (women09)"
+  ) +
+  theme_minimal()
+```
+# 9. Try creating the same graph by providing "gdp_10_thou:pr_sys" as the term.
+```{r}
+# Model with interaction term
+model_interaction <- lm(women09 ~ gdp_10_thou * pr_sys, data = world)
+
+# Plot effect for interaction term
+effect_gdp_pr_interaction <- Effect(
+  focal.predictors = c("gdp_10_thou", "pr_sys"), 
+  mod = model_interaction, 
+  given.values = list(pr_sysYes = 1)
+)
+
+# Plot graph
+plot(effect_gdp_pr_interaction)
+
+```
+# 10. Estimate a regression model of female representation that uses region as the main
+# independent variable.
+```{r}
+# Ensure region is a factor variable
+world$region <- as.factor(world$region)
+# Estimate regression model
+model_region <- lm(women09 ~ region, data = world)
+# View model summary
+summary(model_region)
+# The regions with statistically significant results are - Asia-Pacific, Middle
+# East, Scandinavia, and Western Europe.
+# The Scandinavia region has the highest positive impact 
+# on female representation, while the Middle East has the 
+# largest negative impact. The Multiple R-squared of 0.2615 
+# indicates that approximately 26.15% of the variability 
+# in female representation is explained by the region variable.
+```
+# 11. Create an effect plot that shows the relationship between region and female
+# representation.
+```{r}
+# Generate effect of region on female representation
+effect_region <- Effect(focal.predictors = "region", mod = model_region)
+# Plot the effect
+plot(effect_region, main = "Effect of Region on Female Representation",
+     xlab = "Region", ylab = "Female Representation (Women09)", 
+     col = "blue", cex.lab = 1.2, cex.axis = 1.2)
+```
+# 12. Estimate a regression model of female representation on per capita GDP that controls for
+# region.
+```{r}
+# Fit the model with per capita GDP and region as independent variables
+model_gdp_region <- lm(women09 ~ gdp_10_thou + region, data = world)
+# View model summary
+summary(model_gdp_region)
+# The model shows the effect of GDP after controlling for region.
+# The Adjusted R-squared of 0.2643 is slightly higher than previous models.
+```
+# # 13. Estimate a regression model of female representation on frac_eth3, a 
+# three-category ordinal variable that measures levels of ethnic fractionalization.
+```{r}
+# Create a model using ethnic fractionalization as a categorical nominal variable
+model_frac_eth3 <- lm(women09 ~ factor(frac_eth3), data = world)
+# view summary of model
+summary(model_frac_eth3)
+```
+# 14. Based on the results, do you think ethnic fractionalization levels
+# have a positive/negative impact on female representation? 
+```{r}
+# Based on the regression results, 
+# we cannot conclude that ethnic fractionalization 
+# levels have a statistically significant positive 
+# or negative impact on female
+# representation in this dataset. 
+# The p-values for all categories of ethnic fractionalization 
+# are high, and the model as a whole is not significant.
+```
+
+
