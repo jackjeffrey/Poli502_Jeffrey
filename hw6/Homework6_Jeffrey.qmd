@@ -1,0 +1,205 @@
+---
+title: "Homework6_Jeffrey"
+author: "Jack Jeffrey"
+format: pdf
+editor: visual
+---
+
+## Homework 6
+
+# 2.1 Describe Y: PR system
+
+```{r}
+setwd("/Users/jackjeffrey/Documents/Poli502_Jeffrey/Data")
+world.data <- read.csv("world.csv")
+# load data 
+table(world.data $ pr_sys)
+# view table 
+```
+
+```{r}
+# change labels
+world.data $ pr <- factor(world.data$pr_sys, 
+                        levels = c("Yes", "No"),
+                        labels = c("PR System", "Non-PR"))
+table(world.data$pr)
+# view table for varaibels
+```
+
+# 2.2 Describe X: Ethnic fractionalization
+
+```{r}
+table(world.data$frac_eth3)
+# view table 
+tail(world.data[c("country", "frac_eth3")])
+# view table with country names
+world.data$frac_eth3_ord <- factor(world.data $ frac_eth3, 
+                                     level = c("Low", "Medium", "High"), # order it in this way
+                                     ordered = TRUE)
+table(world.data$frac_eth3_ord)
+# order the variable names
+table(world.data$frac_eth3)
+table(world.data$frac_eth3_ord)
+# compare tables
+table( world.data$frac_eth3, world.data$frac_eth3_ord )
+# created two by two table 
+```
+
+# 2.3 Describe X-Y
+
+```{r}
+table( world.data$pr, world.data$frac_eth3_ord )
+# created X Y table 
+install.packages("gmodels")
+library(gmodels)
+# loaded gmodels package 
+CrossTable(world.data$pr, world.data$frac_eth3_ord)
+# ran crosstable function to display column percentages, chi squared test, # and p-value 
+CrossTable( world.data$pr, world.data$frac_eth3_ord,
+           prop.r = FALSE,     
+           prop.t = FALSE,    
+           prop.chisq = FALSE, 
+           chisq = TRUE)
+# removed outputs for crosstbale
+# chi sqaured equals 4.76 with 2 degrees of freedom and a p value of 
+# 0.092. We could reject the null at a 90% confidence level. 
+```
+
+# 3. Correlation
+
+# 3.1 Describe Y: labor freedom
+
+```{r}
+summary(world.data$free_labor)
+# view statistics for free labor variable, variable has 18 NA's 
+install.packages("tidyverse")
+library(tidyverse)
+# loaded tidyverse package 
+g <- ggplot( world.data, aes( x = free_labor ) ) + geom_histogram()
+g <- g + ylab("Number of countries") + xlab("Labor freedom") + theme_bw()
+g
+# created a graphical summary of number of countries and labor freedom
+cleaned_data <- world.data[is.finite(world.data$free_labor), ]
+# removed na's in new object 
+cleaned_data <- ggplot( world.data, aes( x = free_labor ) ) +
+geom_histogram(binwidth = 1) +
+geom_histogram()
+cleaned_data <- g + ylab("Number of countries") + xlab("Labor freedom") + theme_bw()
+cleaned_data
+# graphed varibale without NA's and new binwidth value
+```
+
+# 3.1 Describe Y: labor freedom
+
+```{r}
+summary(world.data$free_labor)
+# view statistics for free labor variable, variable has 18 NA's 
+# loaded tidyverse package 
+g <- ggplot( world.data, aes( x = free_labor ) ) + geom_histogram()
+g <- g + ylab("Number of countries") + xlab("Labor freedom") + theme_bw()
+g
+# created a graphical summary of number of countries and labor freedom
+cleaned_data <- world.data[is.finite(world.data$free_labor), ]
+# removed na's in new object 
+cleaned_data <- ggplot( world.data, aes( x = free_labor ) ) +
+geom_histogram(binwidth = 1) +
+geom_histogram()
+cleaned_data <- g + ylab("Number of countries") + xlab("Labor freedom") + theme_bw()
+cleaned_data
+# graphed varibale without NA's and new binwidth value
+```
+
+# 3.2 Describe X: union density
+
+```{r}
+summary(world.data$unions)
+# numerical summary for union variable, 100 NA's found 
+g <- ggplot(world.data, aes(x = unions)) + 
+  geom_histogram(na.rm = TRUE) +  # use statbin to remove NA's
+  ylab("Number of countries") + 
+  xlab("Percent laborers in unions") + 
+  theme_bw()
+g
+# saved the plot
+```
+
+# 3.3 Describe X-Y
+
+```{r}
+g <- ggplot(world.data, aes( x = unions, y = free_labor) ) + geom_point()  + theme_bw()
+g <- g + ylab("Labor freedom") + xlab("Percent laborers in unions")
+g
+# plotted an x-y scatterplot graph using geom_point
+```
+
+# Calculate test-statistic & p
+
+```{r}
+lab.uni.mat <- as.matrix(world.data[ c("unions","free_labor")])
+# create a new matrix 
+library(Hmisc)
+# install and load Hmisc package 
+rcorr(lab.uni.mat, type = "pearson")
+# run pearson's test
+# interpreation - for the Pearson's test we can see that the correlation 
+# coefficient is positive at 0.18. We can also see that there are a total of # 91 observations present in both our x and y variables. The p value of 0
+#.0913 indicates that our expectations of more labor unions correlating to 
+# more labor freedom is statistically significant at the 90% level but not  # at the 95% level. 
+```
+
+# 4. Adding lines and labels to a graph
+
+```{r}
+lab.data <- world.data[is.na(world.data $ unions) == FALSE & is.na(world.data$free_labor) == FALSE, ]
+# created a new object with NA's removed 
+mean.y <- mean(lab.data$free_labor)
+mean.x <- mean(lab.data$unions)
+
+mean.y
+mean.x
+# calculate the means - mean for Y equals 61.66, mean for X equals 24.74
+g <- ggplot( lab.data, aes( x = unions, y = free_labor) ) + geom_point( )  + theme_bw()
+g <- g + ylab("Labor freedom") + xlab("Percent laborers in unions")
+g <- g + geom_hline( aes( yintercept = mean.y))
+g <- g + geom_vline( aes( xintercept = mean.x))
+g
+# graphed a scatterplot using hline and vline to draw lines at the x and y
+# means 
+g <- ggplot(lab.data, aes( x = unions, y = free_labor) ) + geom_point()  + theme_bw()
+g <- g + geom_text(aes(label = country))
+g <- g + ylab("Labor freedom") + xlab("Percent laborers in unions")
+g <- g + geom_hline( aes( yintercept = mean.y))
+g <- g + geom_vline( aes( xintercept = mean.x))
+g
+# graphed the same scatterplot but with country labels
+library(ggrepel)
+# install and load ggrepel package
+
+g <- ggplot(lab.data, aes( x = unions, y = free_labor) ) + geom_point()  + theme_bw()
+g <- g + geom_label_repel(aes(label = country, size =12))
+g <- g + ylab("Labor freedom") + xlab("Percent laborers in unions")
+g <- g + geom_hline( aes( yintercept = mean.y))
+g <- g + geom_vline( aes( xintercept = mean.x))
+g
+# updated scatterplot using ggrepel so that the labels are more legible 
+options(ggrepel.max.overlaps = Inf) # show all labels 
+
+g <- ggplot(lab.data, aes( x = unions, y = free_labor) ) + geom_point()  + theme_bw()
+# g <- g + geom_text(aes(label = country))
+# g <- g + geom_text_repel(aes(label = country))
+g <- g + geom_label_repel(aes(label = country, size =12))
+g <- g + ylab("Labor freedom") + xlab("Percent laborers in unions")
+g <- g + geom_hline( aes( yintercept = mean.y))
+g <- g + geom_vline( aes( xintercept = mean.x))
+
+# g  = g + theme( plot.title=element_text(size=16,face="bold"),
+#        axis.text=element_text(size=18),
+#        axis.title=element_text(size=20,face="bold"))
+# g = g + geom_text(aes(size = 12))
+g
+# finally, show all country labels on scatterplot
+```
+```{r}
+if (!require("gmodels")) install.packages("gmodels")
+library(gmodels)
+```

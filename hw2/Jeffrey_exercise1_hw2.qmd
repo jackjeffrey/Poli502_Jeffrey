@@ -320,4 +320,5 @@ mat.w [2, 2]
 matrix.v [2, 2]
 ```
 
+
 # End of exercise
