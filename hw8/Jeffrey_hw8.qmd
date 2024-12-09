@@ -6,19 +6,34 @@ editor: visual
 ---
 
 ## HW8
+# setup
 ```{r}
+
+# Set consistent root directory for all chunks
+knitr::opts_knit$set(root.dir = "/Users/jackjeffrey/Documents/Poli502_Jeffrey/Data")
 # Set CRAN mirror to avoid errors during package installation
 options(repos = c(CRAN = "https://cran.rstudio.com/"))
-# Set working directory and load world data
+
+install.packages("effects")  # Only if not already installed
+library(effects)
+
+
+getwd()
+
+
 setwd("/Users/jackjeffrey/Documents/Poli502_Jeffrey/Data")
+
+
 world <- read.csv("world.csv")
-# Investigate dataset
-head(world)
-str(world)
-names(world)
+
+
+world <- read.csv("/Users/jackjeffrey/Documents/Poli502_Jeffrey/Data/world.csv")
+
+
 ```
 
 # 1. Estimate a constant-only model
+
 ```{r}
 # Fit a constant only model
 model_constant <- lm(women09 ~ 1, data = world)
@@ -26,11 +41,13 @@ model_constant <- lm(women09 ~ 1, data = world)
 summary(model_constant)
 # Estimate of intercept/mean equals 17.17772 which is 17% female representation
 # across all countries on average, standard error of 0.8238, P-value below zero
-# indicates the result is statistically significant meaning there is a clear average.
+# indicates the result is statistically significant meaning there is a clear 
+# average.
 # 110 Observations not included due to NA's.
 ```
 
 # 2. Estimate a model that uses per capita GDP (gdp_10_thou) as the main independent variable.
+
 ```{r}
 # Fitting a linear model with women09 variable as dependent and gdp_10_thou
 # as independent variable
@@ -49,7 +66,9 @@ summary(model_gdp)
 ```
 
 # 3. Create a graph that shows the estimated effect of per capita GDP on female representation
+
 # using the effect function.
+
 ```{r}
 # Create effect graph for GDP per capita's effect on female representation
 effect_gdp <- effect("gdp_10_thou", model_gdp)
@@ -57,8 +76,10 @@ plot(effect_gdp, main = "Estimated Effect of Per Capita GDP on Female Representa
      xlab = "Per Capita GDP (in 10,000 dollars)", ylab = "Female Representation (Women09)")
 ```
 
-# 4. Estimate a model that uses a dummy variable that measures electoral system (pr_sys) as the 
+# 4. Estimate a model that uses a dummy variable that measures electoral system (pr_sys) as the
+
 # main independent variable.
+
 ```{r}
 # Investigate PR system variable to see if it is binary
 unique(world$pr_sys)
@@ -75,8 +96,11 @@ summary(model_pr_sys)
 # representation electoral system, the average 
 # female representation is about 14.16.
 ```
+
 # 5. Create a graph that shows the estimated effect of electoral system on female representation
+
 # using the effect function.
+
 ```{r}
 # Create an effect graph for the effect of electoral systems 
 # on female representation
@@ -88,6 +112,7 @@ plot(effect_pr_sys)
 ```
 
 # 6. Estimate a model that includes per capita GDP AND electoral system dummy at the same time.
+
 ```{r}
 # Create a multiple regression model
 model_gdp_prsys <- lm(women09 ~ gdp_10_thou + pr_sys, data = world)
@@ -101,6 +126,7 @@ summary(model_gdp_prsys)
 ```
 
 # 7. Comparing the four models you have estimated so far, which one fits the data best?
+
 ```{r}
 # Model 4 fits the data best of the four models as it has 
 # the lowest Residual Standard Error and highest Adjusted R-squared 
@@ -108,7 +134,9 @@ summary(model_gdp_prsys)
 ```
 
 # 8. Create a graph that shows the effect of per capita GDP on Y for countries that adopt a
+
 # proportional representation system.
+
 ```{r}
 # filter out missing data in pr_sys (ensure pr_sys is a factor with 1/0 values or "Yes"/"No")
 world$pr_sys <- as.factor(world$pr_sys)  # make sure it's a factor
@@ -146,7 +174,9 @@ ggplot(pr_data, aes(x = gdp_10_thou, y = women09)) +
   ) +
   theme_minimal()
 ```
+
 # 9. Try creating the same graph by providing "gdp_10_thou:pr_sys" as the term.
+
 ```{r}
 # Model with interaction term
 model_interaction <- lm(women09 ~ gdp_10_thou * pr_sys, data = world)
@@ -162,8 +192,11 @@ effect_gdp_pr_interaction <- Effect(
 plot(effect_gdp_pr_interaction)
 
 ```
+
 # 10. Estimate a regression model of female representation that uses region as the main
+
 # independent variable.
+
 ```{r}
 # Ensure region is a factor variable
 world$region <- as.factor(world$region)
@@ -179,8 +212,11 @@ summary(model_region)
 # indicates that approximately 26.15% of the variability 
 # in female representation is explained by the region variable.
 ```
+
 # 11. Create an effect plot that shows the relationship between region and female
+
 # representation.
+
 ```{r}
 # Generate effect of region on female representation
 effect_region <- Effect(focal.predictors = "region", mod = model_region)
@@ -189,8 +225,11 @@ plot(effect_region, main = "Effect of Region on Female Representation",
      xlab = "Region", ylab = "Female Representation (Women09)", 
      col = "blue", cex.lab = 1.2, cex.axis = 1.2)
 ```
+
 # 12. Estimate a regression model of female representation on per capita GDP that controls for
+
 # region.
+
 ```{r}
 # Fit the model with per capita GDP and region as independent variables
 model_gdp_region <- lm(women09 ~ gdp_10_thou + region, data = world)
@@ -199,16 +238,22 @@ summary(model_gdp_region)
 # The model shows the effect of GDP after controlling for region.
 # The Adjusted R-squared of 0.2643 is slightly higher than previous models.
 ```
-# # 13. Estimate a regression model of female representation on frac_eth3, a 
+
+# \# 13. Estimate a regression model of female representation on frac_eth3, a
+
 # three-category ordinal variable that measures levels of ethnic fractionalization.
+
 ```{r}
 # Create a model using ethnic fractionalization as a categorical nominal variable
 model_frac_eth3 <- lm(women09 ~ factor(frac_eth3), data = world)
 # view summary of model
 summary(model_frac_eth3)
 ```
+
 # 14. Based on the results, do you think ethnic fractionalization levels
-# have a positive/negative impact on female representation? 
+
+# have a positive/negative impact on female representation?
+
 ```{r}
 # Based on the regression results, 
 # we cannot conclude that ethnic fractionalization 
@@ -218,5 +263,3 @@ summary(model_frac_eth3)
 # The p-values for all categories of ethnic fractionalization 
 # are high, and the model as a whole is not significant.
 ```
-
-
